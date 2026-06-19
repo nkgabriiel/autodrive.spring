@@ -1,0 +1,200 @@
+
+### CADASTRAR VEÍCULO — POST /api/veiculos
+### Esperado: 201 Created, corpo com o veículo salvo (incluindo id)
+
+POST http://localhost:8080/api/veiculos
+Content-Type: application/json
+
+{
+  "marca": "Toyota",
+  "modelo": "Corolla",
+  "anoFabricacao": 2024,
+  "anoModelo": 2025,
+  "placa": "ABC1D23",
+  "preco": 145000.00,
+  "cor": "Prata",
+  "disponivel": true
+}
+
+
+### Cadastrar um segundo veículo (útil pra testar a listagem com mais de 1 item)
+POST http://localhost:8080/api/veiculos
+Content-Type: application/json
+
+{
+  "marca": "Ford",
+  "modelo": "Mustang",
+  "anoFabricacao": 2023,
+  "anoModelo": 2023,
+  "placa": "MUS7777",
+  "preco": 390000.00,
+  "cor": "Vermelho",
+  "disponivel": true
+}
+
+
+### Cadastrar um terceiro veículo (já vendido, disponivel = false)
+POST http://localhost:8080/api/veiculos
+Content-Type: application/json
+
+{
+  "marca": "Chevrolet",
+  "modelo": "Onix",
+  "anoFabricacao": 2022,
+  "anoModelo": 2023,
+  "placa": "ONX5566",
+  "preco": 78900.00,
+  "cor": "Branco",
+  "disponivel": false
+}
+
+
+
+### 1.1) CADASTRAR COM PLACA DUPLICADA
+### Esperado: 409 Conflict
+### (rode a primeira requisição de cadastro acima antes desta)
+
+POST http://localhost:8080/api/veiculos
+Content-Type: application/json
+
+{
+  "marca": "Toyota",
+  "modelo": "Corolla",
+  "anoFabricacao": 2024,
+  "anoModelo": 2025,
+  "placa": "ABC1D23",
+  "preco": 150000.00,
+  "cor": "Preto",
+  "disponivel": true
+}
+
+
+### 1.2) CADASTRAR COM DADOS INVÁLIDOS — marca vazia e preço negativo
+### Esperado: 400 Bad Request, corpo com lista de erros de validação
+
+POST http://localhost:8080/api/veiculos
+Content-Type: application/json
+
+{
+  "marca": "",
+  "modelo": "Corolla",
+  "anoFabricacao": 2024,
+  "anoModelo": 2025,
+  "placa": "XYZ9999",
+  "preco": -10.00,
+  "cor": "Prata",
+  "disponivel": true
+}
+
+
+### 1.3) CADASTRAR COM CAMPOS OBRIGATÓRIOS AUSENTES
+### Esperado: 400 Bad Request
+POST http://localhost:8080/api/veiculos
+Content-Type: application/json
+
+{
+  "cor": "Azul"
+}
+
+
+
+### 2) LISTAR TODOS OS VEÍCULOS — GET /api/veiculos
+### Esperado: 200 OK, array com todos os veículos cadastrados
+GET http://localhost:8080/api/veiculos
+
+
+### 3) BUSCAR VEÍCULO POR ID — GET /api/veiculos/{id}
+### Esperado: 200 OK
+### Troque o "1" pelo id retornado em algum cadastro acima
+GET http://localhost:8080/api/veiculos/1
+
+
+### 3.1) BUSCAR VEÍCULO POR ID INEXISTENTE
+### Esperado: 404 Not Found
+GET http://localhost:8080/api/veiculos/999999
+
+
+### 4) ATUALIZAR VEÍCULO — PUT /api/veiculos/{id}
+### Esperado: 200 OK, corpo com os dados atualizados
+### Troque o "1" pelo id de um veículo existente
+PUT http://localhost:8080/api/veiculos/1
+Content-Type: application/json
+
+{
+  "marca": "Toyota",
+  "modelo": "Corolla",
+  "anoFabricacao": 2024,
+  "anoModelo": 2025,
+  "placa": "ABC1D23",
+  "preco": 139900.00,
+  "cor": "Prata",
+  "disponivel": false
+}
+
+
+### 4.1) ATUALIZAR VEÍCULO INEXISTENTE
+### Esperado: 404 Not Found
+PUT http://localhost:8080/api/veiculos/999999
+Content-Type: application/json
+
+{
+  "marca": "Toyota",
+  "modelo": "Corolla",
+  "anoFabricacao": 2024,
+  "anoModelo": 2025,
+  "placa": "ABC1D23",
+  "preco": 139900.00,
+  "cor": "Prata",
+  "disponivel": false
+}
+
+
+### 4.2) ATUALIZAR VEÍCULO COM DADOS INVÁLIDOS
+### Esperado: 400 Bad Request
+PUT http://localhost:8080/api/veiculos/1
+Content-Type: application/json
+
+{
+  "marca": "Toyota",
+  "modelo": "",
+  "anoFabricacao": 2024,
+  "anoModelo": 2025,
+  "placa": "ABC1D23",
+  "preco": 0,
+  "cor": "Prata",
+  "disponivel": false
+}
+
+
+### 4.3) ATUALIZAR VEÍCULO COM PLACA QUE JÁ PERTENCE A OUTRO VEÍCULO
+### Esperado: 409 Conflict
+### Troque o "1" pelo id de um veículo diferente do dono da placa "MUS7777"
+PUT http://localhost:8080/api/veiculos/1
+Content-Type: application/json
+
+{
+  "marca": "Toyota",
+  "modelo": "Corolla",
+  "anoFabricacao": 2024,
+  "anoModelo": 2025,
+  "placa": "MUS7777",
+  "preco": 139900.00,
+  "cor": "Prata",
+  "disponivel": false
+}
+
+
+### 5) EXCLUIR VEÍCULO — DELETE /api/veiculos/{id}
+### Esperado: 204 No Content
+### Troque o "1" pelo id de um veículo existente
+DELETE http://localhost:8080/api/veiculos/1
+
+
+### 5.1) EXCLUIR VEÍCULO INEXISTENTE (ou já excluído acima)
+### Esperado: 404 Not Found
+DELETE http://localhost:8080/api/veiculos/999999
+
+
+### 6) CONFIRMAR EXCLUSÃO — buscar o id excluído de novo
+### Esperado: 404 Not Found
+GET http://localhost:8080/api/veiculos/1
